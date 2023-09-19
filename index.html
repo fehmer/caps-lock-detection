@@ -1,42 +1,56 @@
 <!DOCTYPE html>
 <html>
 <style type="text/css">
-    .capslock{
+    #header:after{ content: 'off'; }
+    #header.capslock:after{
+        content: 'on';
         background: red;
-    }
 </style>
 <script>
+
     var finalState = null;
     const isMacOs = navigator.platform.startsWith("Mac");
 
     function update(event, name){
         console.log({e:name, key:event.key, capsLock: event.getModifierState("CapsLock")});
 
+        /*
+          CapsLock is pressed. We cannot use the modifierState for "CapsLock" in this case
+          because the browser implementation differs widely depending on the browser and even the
+          operating system.
+          We simply toggle the previous state for CapsLock if known.
+        */
         if(event.key === "CapsLock" && finalState !== null){
-            finalState=!finalState;
+            finalState =! finalState;
         } else {
-            finalState=event.getModifierState("CapsLock");
+            //on all other key presses we can trust the modifierState
+            finalState = event.getModifierState("CapsLock");
         }
 
         console.log("capslock is ", finalState?"on":"off");
 
         if(finalState){
-            document.getElementById('text').classList=['capslock'];
+            document.getElementById('header').classList=['capslock'];
         }else {
-            document.getElementById('text').classList=[];
+            document.getElementById('header').classList=[];
         }
     }
 
     document.addEventListener("keyup", event=> {
         document.getElementById('text').append(event.key + " ");
+
         update(event, "keyup");
     });
 
     document.addEventListener("keydown", event=> {
+        //macOs sends only keyDown when enabling CapsLock and only keyUp when disabling.
         if(isMacOs) update(event, "keydown");
     });
 
 </script>
-<body id="text">ver 4:
+<body>
+    <h1 id="header">Caps-Lock is </h1>
+    type some text or toggle caps lock...
+    <div id="text"></div>
 </body>
 </html>
