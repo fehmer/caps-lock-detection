@@ -9,13 +9,18 @@
     var lastDown = false;
     var finalState = false;
 
-    document.addEventListener("keydown", event=> {
-        if(event.code !== "CapsLock") return;
-        let isCapsLockOn = event.getModifierState("CapsLock");
-        console.log({e:"keydown", isCapsLockOn, lastDown});
-        lastDown = isCapsLockOn;
-        finalState = isCapsLockOn;
-    });
+    const isLinux = navigator.platform.startsWith("Linux");
+    const isMacOs = navigator.platform.startsWith("Mac");
+    const isChrome = (/Chrom.*Safari/).test(navigator.userAgent);
+
+    function update(){
+        console.log("capslock is ", finalState?"on":"off");
+        if(finalState){
+            document.getElementById('text').classList=['capslock'];
+        }else {
+            document.getElementById('text').classList=[];
+        }
+    }
 
     document.addEventListener("keyup", event=> {
         document.getElementById('text').append(event.key + " ");
@@ -23,21 +28,28 @@
         let isCapsLockOn = event.getModifierState("CapsLock");
         console.log({e:"keyup", isCapsLockOn, lastDown});
 
-        if(event.code === "CapsLock" && navigator.platform.startsWith('Linux') && (/Chrom.*Safari/).test(navigator.userAgent)){
+        if(event.code === "CapsLock" && isLinux && isChrome ){
             finalState = !lastDown && isCapsLockOn;
         } else {
             finalState = isCapsLockOn;
         }
 
-        console.log("capslock is ", finalState?"on":"off");
+        update();
+    });
 
-        if(finalState){
-            document.getElementById('text').classList=['capslock'];
-        }else {
-            document.getElementById('text').classList=[];
+    document.addEventListener("keydown", event=> {
+        if(event.code !== "CapsLock") return;
+        let isCapsLockOn = event.getModifierState("CapsLock");
+        console.log({e:"keydown", isCapsLockOn, lastDown});
+        lastDown = isCapsLockOn;
+
+        if(isMacOs){
+            finalState = isCapsLockOn;
+            update();
         }
     });
+
 </script>
-<body id="text">
+<body id="text">ver 2:
 </body>
 </html>
