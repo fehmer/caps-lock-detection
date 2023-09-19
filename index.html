@@ -6,15 +6,22 @@
     }
 </style>
 <script>
-    var lastDown = false;
-    var finalState = false;
-
-    const isLinux = navigator.platform.startsWith("Linux");
+    var finalState = null;
     const isMacOs = navigator.platform.startsWith("Mac");
-    const isChrome = (/Chrom.*Safari/).test(navigator.userAgent);
 
-    function update(){
+    function update(event, name){
+        console.log({e:name, key:event.key, capsLock: event.getModifierState("CapsLock")});
+
+        if(event.key=== "CapsLock"){
+            if(finalState!== null){
+                finalState=!finalState;
+            }
+        } else {
+            finalState=event.getModifierState("CapsLock");
+        }
+
         console.log("capslock is ", finalState?"on":"off");
+
         if(finalState){
             document.getElementById('text').classList=['capslock'];
         }else {
@@ -25,31 +32,14 @@
     document.addEventListener("keyup", event=> {
         document.getElementById('text').append(event.key + " ");
 
-        let isCapsLockOn = event.getModifierState("CapsLock");
-        console.log({e:"keyup", isCapsLockOn, lastDown});
-
-        if(event.code === "CapsLock" && isLinux && isChrome ){
-            finalState = !lastDown && isCapsLockOn;
-        } else {
-            finalState = isCapsLockOn;
-        }
-
-        update();
+        update(event, "keyup");
     });
 
     document.addEventListener("keydown", event=> {
-        if(event.code !== "CapsLock") return;
-        let isCapsLockOn = event.getModifierState("CapsLock");
-        console.log({e:"keydown", isCapsLockOn, lastDown});
-        lastDown = isCapsLockOn;
-
-        if(isMacOs){
-            finalState = isCapsLockOn;
-            update();
-        }
+        if(isMacOs) update(event, "keydown");
     });
 
 </script>
-<body id="text">ver 2:
+<body id="text">ver 3, type one letter first, then toggle caps-lock:
 </body>
 </html>
