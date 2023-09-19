@@ -12,10 +12,8 @@
     function update(event, name){
         console.log({e:name, key:event.key, capsLock: event.getModifierState("CapsLock")});
 
-        if(event.key=== "CapsLock"){
-            if(finalState!== null){
-                finalState=!finalState;
-            }
+        if(event.key === "CapsLock" && finalState !== null){
+            finalState=!finalState;
         } else {
             finalState=event.getModifierState("CapsLock");
         }
@@ -31,7 +29,6 @@
 
     document.addEventListener("keyup", event=> {
         document.getElementById('text').append(event.key + " ");
-
         update(event, "keyup");
     });
 
@@ -40,6 +37,6 @@
     });
 
 </script>
-<body id="text">ver 3, type one letter first, then toggle caps-lock:
+<body id="text">ver 4:
 </body>
 </html>
