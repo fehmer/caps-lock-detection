@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<style type="text/css">
+    .capslock{
+        background: red;
+    }
+</style>
+<script>
+    var lastDown = false;
+    var finalState = false;
+
+    document.addEventListener("keydown", event=> {
+        if(event.code !== "CapsLock") return;
+        let isCapsLockOn = event.getModifierState("CapsLock");
+        console.log({e:"keydown", isCapsLockOn, lastDown});
+        lastDown = isCapsLockOn;
+        finalState = isCapsLockOn;
+    });
+
+    document.addEventListener("keyup", event=> {
+        document.getElementById('text').append(event.key + " ");
+
+        let isCapsLockOn = event.getModifierState("CapsLock");
+        console.log({e:"keyup", isCapsLockOn, lastDown});
+
+        if(event.code === "CapsLock" && navigator.platform.startsWith('Linux') && (/Chrom.*Safari/).test(navigator.userAgent)){
+            finalState = !lastDown && isCapsLockOn;
+        } else {
+            finalState = isCapsLockOn;
+        }
+
+        console.log("capslock is ", finalState?"on":"off");
+
+        if(finalState){
+            document.getElementById('text').classList=['capslock'];
+        }else {
+            document.getElementById('text').classList=[];
+        }
+    });
+</script>
+<body id="text">
+</body>
+</html>
