@@ -1,56 +1,83 @@
 <!DOCTYPE html>
 <html>
 <style type="text/css">
-    #header:after{ content: 'off'; }
-    #header.capslock:after{
+    #header:after {
+        content: 'off';
+    }
+
+    #header.capslock:after {
         content: 'on';
         background: red;
+    }
 </style>
 <script>
 
     var finalState = null;
     const isMacOs = navigator.platform.startsWith("Mac");
+    function updateIndicator() {
+        console.log("capslock is ", finalState ? "on" : "off");
 
-    function update(event, name){
-        console.log({e:name, key:event.key, capsLock: event.getModifierState("CapsLock")});
-
-        /*
-          CapsLock is pressed. We cannot use the modifierState for "CapsLock" in this case
-          because the browser implementation differs widely depending on the browser and even the
-          operating system.
-          We simply toggle the previous state for CapsLock if known.
-        */
-        if(event.key === "CapsLock" && finalState !== null){
-            finalState =! finalState;
+        if (finalState) {
+            document.getElementById('header').classList = ['capslock'];
         } else {
-            //on all other key presses we can trust the modifierState
-            finalState = event.getModifierState("CapsLock");
-        }
-
-        console.log("capslock is ", finalState?"on":"off");
-
-        if(finalState){
-            document.getElementById('header').classList=['capslock'];
-        }else {
-            document.getElementById('header').classList=[];
+            document.getElementById('header').classList = [];
         }
     }
 
-    document.addEventListener("keyup", event=> {
+    function update(event, name) {
+        /*
+     CapsLock is pressed. We cannot use the modifierState for "CapsLock" in this case
+     because the browser implementation differs widely depending on the browser and even the
+     operating system.
+   */
+        if (event.key !== "CapsLock") {
+            /* on all other key presses we can trust the modifierState */
+            finalState = event.getModifierState("CapsLock");
+        }
+        updateIndicator();
+
+    }
+
+    document.addEventListener("keyup", event => {
+        console.log({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
+        if (isMacOs) {
+            if (event.key === "CapsLock") {
+                finalState = event.getModifierState("CapsLock");
+            }
+        } else {
+            update(event, "keyup");
+        }
         document.getElementById('text').append(event.key + " ");
 
-        update(event, "keyup");
     });
 
-    document.addEventListener("keydown", event=> {
-        //macOs sends only keyDown when enabling CapsLock and only keyUp when disabling.
-        if(isMacOs) update(event, "keydown");
-    });
+    document.addEventListener("keydown", event => {
+        console.log({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
+        /* macOs sends only keyDown when enabling CapsLock and only keyUp when disabling. */
+        if (isMacOs) {
+            if (event.key === "CapsLock") {
+                finalState = event.getModifierState("CapsLock");
+                updateIndicator();
+            } else {
+                update(event, "keydown");
+            }
+        } else {
+            /**
+             * Linux sends the correct state before the toggle only on keydown, so we invert the modifier state 
+             */
+            if (event.key === "CapsLock") {
+                finalState = !event.getModifierState("CapsLock");
+            }
+            updateIndicator();
+        }
+    })
 
 </script>
+
 <body>
     <h1 id="header">Caps-Lock is </h1>
     type some text or toggle caps lock...
     <div id="text"></div>
 </body>
+
 </html>
