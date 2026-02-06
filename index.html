@@ -47,6 +47,7 @@
         } else {
             update(event, "keyup");
         }
+        updateIndicator();
         document.getElementById('text').append(event.key + " ");
 
     });
@@ -57,7 +58,6 @@
         if (isMacOs) {
             if (event.key === "CapsLock") {
                 finalState = event.getModifierState("CapsLock");
-                updateIndicator();
             } else {
                 update(event, "keydown");
             }
@@ -68,8 +68,8 @@
             if (event.key === "CapsLock") {
                 finalState = !event.getModifierState("CapsLock");
             }
-            updateIndicator();
         }
+        updateIndicator();
     })
 
 </script>
