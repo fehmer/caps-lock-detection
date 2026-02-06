@@ -27,62 +27,37 @@
         }
     }
 
-    function update(event, name) {
-        /*
-     CapsLock is pressed. We cannot use the modifierState for "CapsLock" in this case
-     because the browser implementation differs widely depending on the browser and even the
-     operating system.
-   */
-        if (event.key !== "CapsLock") {
-            /* on all other key presses we can trust the modifierState */
-            finalState = event.getModifierState("CapsLock");
-        }
-    }
-
     document.addEventListener("keyup", event => {
         console.log({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
+        /* macOs sends only keyDown when enabling CapsLock and only keyUp when disabling. */
         if (isMacOs) {
             if (event.key === "CapsLock") {
                 finalState = event.getModifierState("CapsLock");
             }
         }
-        else {
-            if (isWindows) {
-                /**
-               * Windowssends the correct state on keyup
-               */
-                if (event.key === "CapsLock") {
-                    finalState = event.getModifierState("CapsLock");
-                }
-            }
-
-
-            update(event, "keyup");
+        else if (isWindows) {
+            /* Windows always sends the correct state on keyup */
+            finalState = event.getModifierState("CapsLock");
+        } else if (event.key !== "CapsLock") {
+            finalState = event.getModifierState("CapsLock");
         }
+
         updateIndicator();
         document.getElementById('text').append(event.key + " ");
-
     });
 
     document.addEventListener("keydown", event => {
         console.log({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
         /* macOs sends only keyDown when enabling CapsLock and only keyUp when disabling. */
         if (isMacOs) {
-            if (event.key === "CapsLock") {
-                finalState = event.getModifierState("CapsLock");
-            } else {
-                update(event, "keydown");
-            }
+            finalState = event.getModifierState("CapsLock");
             updateIndicator();
         } else if (isLinux) {
-            /**
-             * Linux sends the correct state before the toggle only on keydown, so we invert the modifier state 
-             */
+            /* Linux sends the correct state before the toggle only on keydown, so we invert the modifier state */
             if (event.key === "CapsLock") {
                 finalState = !event.getModifierState("CapsLock");
             }
         }
-
     })
 
 </script>
