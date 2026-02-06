@@ -13,7 +13,10 @@
 <script>
 
     var finalState = null;
-    const isMacOs = navigator.platform.startsWith("Mac");
+    const isMacOs = navigator.platform.startsWith("Mac") || /Mac/i.test(navigator.userAgent);
+    const isLinux = navigator.platform.startsWith("Linux") || /Linux/i.test(navigator.userAgent);
+    const isWindows = navigator.platform.startsWith("Win") || /Win/i.test(navigator.userAgent);
+
     function updateIndicator() {
         console.log("capslock is ", finalState ? "on" : "off");
 
@@ -44,7 +47,16 @@
             if (event.key === "CapsLock") {
                 finalState = event.getModifierState("CapsLock");
             }
-        } else {
+        }
+        else if (isWindows) {
+            /**
+           * Windowssends the correct state on keyup
+           */
+            if (event.key === "CapsLock") {
+                finalState = event.getModifierState("CapsLock");
+            }
+        }
+        else {
             update(event, "keyup");
         }
         updateIndicator();
@@ -61,7 +73,7 @@
             } else {
                 update(event, "keydown");
             }
-        } else {
+        } else if (isLinux) {
             /**
              * Linux sends the correct state before the toggle only on keydown, so we invert the modifier state 
              */
