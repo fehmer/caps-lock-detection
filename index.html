@@ -37,8 +37,6 @@
             /* on all other key presses we can trust the modifierState */
             finalState = event.getModifierState("CapsLock");
         }
-        updateIndicator();
-
     }
 
     document.addEventListener("keyup", event => {
@@ -48,15 +46,17 @@
                 finalState = event.getModifierState("CapsLock");
             }
         }
-        else if (isWindows) {
-            /**
-           * Windowssends the correct state on keyup
-           */
-            if (event.key === "CapsLock") {
-                finalState = event.getModifierState("CapsLock");
-            }
-        }
         else {
+            if (isWindows) {
+                /**
+               * Windowssends the correct state on keyup
+               */
+                if (event.key === "CapsLock") {
+                    finalState = event.getModifierState("CapsLock");
+                }
+            }
+
+
             update(event, "keyup");
         }
         updateIndicator();
@@ -73,6 +73,7 @@
             } else {
                 update(event, "keydown");
             }
+            updateIndicator();
         } else if (isLinux) {
             /**
              * Linux sends the correct state before the toggle only on keydown, so we invert the modifier state 
@@ -81,7 +82,7 @@
                 finalState = !event.getModifierState("CapsLock");
             }
         }
-        updateIndicator();
+
     })
 
 </script>
