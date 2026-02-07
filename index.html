@@ -73,8 +73,8 @@
         if (isMacOs) {
             if (event.key === "CapsLock") {
                 finalState = true;
+                updateIndicator();
             }
-            updateIndicator();
         } else if (isLinux) {
             /* Linux sends the correct state before the toggle only on keydown, so we invert the modifier state */
             if (event.key === "CapsLock") {
