@@ -17,6 +17,7 @@
     const isLinux = navigator.platform.startsWith("Linux") || /Linux/i.test(navigator.userAgent);
     const isWindows = navigator.platform.startsWith("Win") || /Win/i.test(navigator.userAgent);
 
+    let logs;
 
     addEventListener("DOMContentLoaded", () => {
         const os = isMacOs ? "macos" : isLinux ? "linux" : isWindows ? "windows" : unknown;
@@ -24,10 +25,12 @@
         const pre = document.createElement("pre");
         pre.innerText = `os: ${os}\nplatform: ${navigator.platform}\nuserAgent: ${navigator.userAgent}\n`;
         document.body.append(pre);
+        logs = document.getElementById("logs");
     })
 
     function updateIndicator() {
         console.log("capslock is ", finalState ? "on" : "off");
+        logs.innerText += `\ncapslock is ${finalState ? "on" : "off"}`;
 
         if (finalState) {
             document.getElementById('header').classList = ['capslock'];
@@ -43,6 +46,7 @@
 
     document.addEventListener("keyup", event => {
         console.log({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
+        logs.innerText += "\n" + JSON.stringify({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
         /* macOs sends only keyDown when enabling CapsLock and only keyUp when disabling. */
         if (isMacOs) {
             if (event.key === "CapsLock") {
@@ -64,6 +68,7 @@
 
     document.addEventListener("keydown", event => {
         console.log({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
+        logs.innerText += "\n" + JSON.stringify({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
         /* macOs sends only keyDown when enabling CapsLock and only keyUp when disabling. */
         if (isMacOs) {
             if (event.key === "CapsLock") {
@@ -88,6 +93,8 @@
     <textarea></textarea>
     <br />
     <br />
+    <h2>logs</h2>
+    <pre id="logs"></pre>
 </body>
 
 </html>
