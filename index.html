@@ -20,7 +20,10 @@
 
     addEventListener("DOMContentLoaded", () => {
         const os = isMacOs ? "macos" : isLinux ? "linux" : isWindows ? "windows" : unknown;
-        document.body.append(`os: ${os}\n`);
+
+        const pre = document.createElement("pre");
+        pre.innerText = `os: ${os}\nplatform: ${navigator.platform}\nuserAgent: ${navigator.userAgent}\n`;
+        document.body.append(pre);
     })
 
     function updateIndicator() {
@@ -74,6 +77,8 @@
     <div id="text"></div>
 
     <textarea></textarea>
+    <br />
+    <br />
 </body>
 
 </html>
