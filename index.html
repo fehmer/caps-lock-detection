@@ -51,8 +51,6 @@
         if (isMacOs) {
             if (event.key === "CapsLock") {
                 finalState = false;
-            } else {
-                finalState = isCapsLockOn(event);
             }
         }
         else if (isWindows) {
@@ -71,10 +69,8 @@
         logs.innerText += "\n" + JSON.stringify({ e: event.type, key: event.key, capsLock: event.getModifierState("CapsLock") });
         /* macOs sends only keyDown when enabling CapsLock and only keyUp when disabling. */
         if (isMacOs) {
-            if (event.key === "CapsLock") {
-                finalState = true;
-                updateIndicator();
-            }
+            finalState = isCapsLockOn(event);
+            updateIndicator();
         } else if (isLinux) {
             /* Linux sends the correct state before the toggle only on keydown, so we invert the modifier state */
             if (event.key === "CapsLock") {
